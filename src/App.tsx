@@ -15,15 +15,31 @@ const App: React.FC = () => {
   const [result, setResult] = useState<DreamResult | null>(null);
   const [showSettings, setShowSettings] = useState(!apiKey);
 
+  const SAMPLE_RESULT: DreamResult = {
+    imageUrl: 'https://images.metmuseum.org/CRDImages/as/web-large/DP141071.jpg',
+    interpretation: 'あなたの夢は、力強いエネルギーと前進の象徴です。大波を乗り越える小舟のように、困難に直面しても確かな技術と勇気を持って進むことで、大きな幸運を掴み取ることができるでしょう。',
+    fortune: '大吉',
+    luckyItem: '富士山の置産'
+  };
+
   useEffect(() => {
     localStorage.setItem('openai_api_key', apiKey);
   }, [apiKey]);
 
   const generateWithAI = async () => {
-    if (!dream.trim() || !apiKey) return;
+    if (!dream.trim()) return;
 
     setIsGenerating(true);
     setResult(null);
+
+    // APIキーがない場合はサンプルを表示
+    if (!apiKey) {
+      setTimeout(() => {
+        setResult(SAMPLE_RESULT);
+        setIsGenerating(false);
+      }, 2000);
+      return;
+    }
 
     try {
       // 1. ChatGPTによる夢解釈と運勢生成
@@ -125,9 +141,9 @@ const App: React.FC = () => {
             <button
               className="btn-primary"
               onClick={generateWithAI}
-              disabled={!dream.trim() || !apiKey}
+              disabled={!dream.trim()}
             >
-              {!apiKey ? 'APIキーを設定してください' : '絵巻を紡ぐ'}
+              {!apiKey ? 'サンプルで紡ぐ' : '絵巻を紡ぐ'}
             </button>
           </div>
         </main>
